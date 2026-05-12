@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wealth Gap Calculator</title>
+<meta name="description" content="See the gap between earning income and owning assets. Two paths, same starting point, ten years later.">
+<meta property="og:title" content="The Wealth Gap Calculator">
+<meta property="og:description" content="Two paths. Same starting point. See where you'd land in 10 years.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Wealth Gap Calculator">
+<meta name="twitter:description" content="Two paths. Same starting point. See where you'd land in 10 years.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fafaf7;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888780;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    color: #5f5e5a;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .sliders {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (min-width: 600px) {
+    .sliders { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  }
+
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: #5f5e5a;
+    margin-bottom: 10px;
+  }
+
+  .slider-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 4px;
+    background: #e8e7e0;
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .paths {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .paths { grid-template-columns: 1fr 1fr; }
+  }
+
+  .path-card {
+    background: #f5f4ef;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .path-card.treasurer {
+    background: #e6f1fb;
+    border: 2px solid #378ADD;
+  }
+
+  .path-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5f5e5a;
+  }
+
+  .path-card.treasurer .path-header {
+    color: #0C447C;
+  }
+
+  .path-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+  }
+
+  .path-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888780;
+    margin-bottom: 6px;
+  }
+
+  .path-amount {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  .path-card.treasurer .path-amount {
+    color: #0C447C;
+  }
+
+  .path-desc {
+    font-size: 12px;
+    color: #5f5e5a;
+    line-height: 1.5;
+  }
+
+  .gap-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .gap-label {
+    font-size: 13px;
+    color: #5f5e5a;
+    margin-bottom: 8px;
+  }
+
+  .gap-amount {
+    font-size: 42px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+  }
+
+  .gap-narrative {
+    font-size: 14px;
+    color: #5f5e5a;
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .chart-wrap {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    height: 280px;
+  }
+
+  .cta-row {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-row p {
+    font-size: 15px;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .cta-row .small {
+    font-size: 13px;
+    color: #5f5e5a;
+    font-weight: 400;
+  }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: #888780;
+    line-height: 1.5;
+    max-width: 520px;
+    margin: 2rem auto 0;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 12px;
+    color: #888780;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="eyebrow">A wealth shift exercise</div>
+    <h1>The wealth gap calculator</h1>
+    <p class="subtitle">Two paths. Same starting point. See where you'd land in 10 years.</p>
+  </div>
+
+  <div class="card">
+    <div class="sliders">
+
+      <div class="slider-group">
+        <label>
+          <span>Annual income</span>
+          <span class="slider-value" id="income-out">$100,000</span>
+        </label>
+        <input type="range" id="income" min="40000" max="500000" step="5000" value="100000">
+      </div>
+
+      <div class="slider-group">
+        <label>
+          <span>Savings rate</span>
+          <span class="slider-value" id="rate-out">10%</span>
+        </label>
+        <input type="range" id="rate" min="5" max="50" step="1" value="10">
+      </div>
+
+      <div class="slider-group">
+        <label>
+          <span>Current assets</span>
+          <span class="slider-value" id="assets-out">$50,000</span>
+        </label>
+        <input type="range" id="assets" min="0" max="2000000" step="10000" value="50000">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="paths">
+
+    <div class="path-card">
+      <div class="path-header">
+        <svg class="path-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>The worker path</span>
+      </div>
+      <div class="path-label">In 10 years</div>
+      <div class="path-amount" id="worker-total">$0</div>
+      <div class="path-desc">Savings in a bank account at 4%, eroded by 3% inflation.</div>
+    </div>
+
+    <div class="path-card treasurer">
+      <div class="path-header">
+        <svg class="path-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+        <span>The treasurer path</span>
+      </div>
+      <div class="path-label">In 10 years</div>
+      <div class="path-amount" id="treasurer-total">$0</div>
+      <div class="path-desc">Same money, deployed into appreciating assets at 12%.</div>
+    </div>
+
+  </div>
+
+  <div class="gap-card">
+    <div class="gap-label">The wealth gap</div>
+    <div class="gap-amount" id="gap-amount">$0</div>
+    <div class="gap-narrative" id="gap-narrative">Adjust the sliders to see how the gap grows.</div>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="gap-chart"></canvas>
+  </div>
+
+  <div class="cta-row">
+    <p>Same income. Same savings. Different game.</p>
+    <p class="small">Share your result. Tag someone who needs to see it.</p>
+  </div>
+
+  <p class="disclaimer">For educational purposes only. Not financial, investment, tax, or legal advice. Returns are illustrative and based on long-term historical averages — actual results vary. You are responsible for your own decisions.</p>
+
+  <div class="footer">
+    Built on the Wealth Operating System framework.
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const fmtShort = n => {
+    if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return '$' + Math.round(n / 1000) + 'k';
+    return '$' + Math.round(n);
+  };
+
+  const incomeEl = document.getElementById('income');
+  const rateEl = document.getElementById('rate');
+  const assetsEl = document.getElementById('assets');
+
+  const incomeOut = document.getElementById('income-out');
+  const rateOut = document.getElementById('rate-out');
+  const assetsOut = document.getElementById('assets-out');
+
+  const workerOut = document.getElementById('worker-total');
+  const treasurerOut = document.getElementById('treasurer-total');
+  const gapOut = document.getElementById('gap-amount');
+  const narrativeOut = document.getElementById('gap-narrative');
+
+  const WORKER_RETURN = 0.04;
+  const WORKER_INFLATION = 0.03;
+  const TREASURER_RETURN = 0.12;
+  const YEARS = 10;
+
+  let chart = null;
+
+  function calc() {
+    const income = parseInt(incomeEl.value);
+    const rate = parseInt(rateEl.value) / 100;
+    const assets = parseInt(assetsEl.value);
+    const annualContribution = income * rate;
+
+    incomeOut.textContent = fmt(income);
+    rateOut.textContent = rate * 100 + '%';
+    assetsOut.textContent = fmt(assets);
+
+    const workerReal = WORKER_RETURN - WORKER_INFLATION;
+    const workerPoints = [];
+    const treasurerPoints = [];
+
+    let workerBalance = assets;
+    let treasurerBalance = assets;
+
+    workerPoints.push(workerBalance);
+    treasurerPoints.push(treasurerBalance);
+
+    for (let y = 1; y <= YEARS; y++) {
+      workerBalance = workerBalance * (1 + workerReal) + annualContribution;
+      treasurerBalance = treasurerBalance * (1 + TREASURER_RETURN) + annualContribution;
+      workerPoints.push(workerBalance);
+      treasurerPoints.push(treasurerBalance);
+    }
+
+    const workerFinal = workerPoints[YEARS];
+    const treasurerFinal = treasurerPoints[YEARS];
+    const gap = treasurerFinal - workerFinal;
+    const multiplier = treasurerFinal / Math.max(workerFinal, 1);
+
+    workerOut.textContent = fmt(workerFinal);
+    treasurerOut.textContent = fmt(treasurerFinal);
+    gapOut.textContent = fmt(gap);
+
+    if (multiplier >= 2) {
+      narrativeOut.textContent = 'The treasurer path ends with ' + multiplier.toFixed(1) + 'x more wealth than the worker path. Same income. Same savings. Different game.';
+    } else if (multiplier >= 1.5) {
+      narrativeOut.textContent = 'The treasurer path ends with ' + Math.round((multiplier - 1) * 100) + '% more wealth. Compounding rewards the strategy, not the effort.';
+    } else {
+      narrativeOut.textContent = 'Even a modest shift in strategy widens the gap every year you keep going.';
+    }
+
+    const labels = [];
+    for (let y = 0; y <= YEARS; y++) labels.push('Yr ' + y);
+
+    if (chart) {
+      chart.data.datasets[0].data = workerPoints;
+      chart.data.datasets[1].data = treasurerPoints;
+      chart.update('none');
+    } else {
+      const ctx = document.getElementById('gap-chart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Worker path',
+              data: workerPoints,
+              borderColor: '#888780',
+              backgroundColor: 'rgba(136, 135, 128, 0.1)',
+              fill: true,
+              tension: 0.3,
+              borderWidth: 2.5,
+              pointRadius: 0,
+              pointHoverRadius: 5
+            },
+            {
+              label: 'Treasurer path',
+              data: treasurerPoints,
+              borderColor: '#378ADD',
+              backgroundColor: 'rgba(55, 138, 221, 0.12)',
+              fill: true,
+              tension: 0.3,
+              borderWidth: 2.5,
+              pointRadius: 0,
+              pointHoverRadius: 5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 12, family: 'Inter' }, boxWidth: 12, padding: 16, color: '#5f5e5a' }
+            },
+            tooltip: {
+              backgroundColor: '#1a1a1a',
+              titleFont: { family: 'Inter', size: 12 },
+              bodyFont: { family: 'Inter', size: 13 },
+              padding: 10,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + fmt(context.parsed.y);
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                callback: function(value) { return fmtShort(value); },
+                font: { size: 11, family: 'Inter' },
+                color: '#888780'
+              },
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              border: { display: false }
+            },
+            x: {
+              ticks: { font: { size: 11, family: 'Inter' }, color: '#888780' },
+              grid: { display: false },
+              border: { display: false }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  incomeEl.addEventListener('input', calc);
+  rateEl.addEventListener('input', calc);
+  assetsEl.addEventListener('input', calc);
+  calc();
+})();
+</script>
+
+</body>
+</html>

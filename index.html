@@ -34,7 +34,7 @@
 
   .header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .eyebrow {
@@ -69,6 +69,46 @@
     color: #999;
     max-width: 480px;
     margin: 0 auto;
+  }
+
+  .mode-toggle {
+    display: inline-flex;
+    background: #131a13;
+    border: 1px solid rgba(180, 240, 50, 0.15);
+    border-radius: 100px;
+    padding: 4px;
+    margin: 2rem auto;
+    gap: 4px;
+  }
+
+  .mode-toggle-wrap {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .mode-btn {
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .mode-btn.active {
+    background: rgba(180, 240, 50, 0.15);
+    color: #b4f032;
+    box-shadow: 0 0 20px rgba(180, 240, 50, 0.1);
+  }
+
+  .mode-btn:hover:not(.active) {
+    color: #ccc;
   }
 
   .card {
@@ -142,6 +182,9 @@
     box-shadow: 0 0 0 1px rgba(180, 240, 50, 0.4), 0 0 20px rgba(180, 240, 50, 0.3);
   }
 
+  .mode-content { display: none; }
+  .mode-content.active { display: block; }
+
   .paths {
     display: grid;
     grid-template-columns: 1fr;
@@ -209,6 +252,10 @@
     color: #b4f032;
   }
 
+  .path-amount.depleted {
+    color: #c44;
+  }
+
   .path-desc {
     font-size: 13px;
     color: #888;
@@ -258,7 +305,7 @@
   .gap-narrative {
     font-size: 14px;
     color: #aaa;
-    max-width: 460px;
+    max-width: 500px;
     margin: 0 auto;
     line-height: 1.55;
   }
@@ -327,34 +374,75 @@
     <p class="subtitle">Two paths. Same starting point. See where you'd land in 10 years.</p>
   </div>
 
-  <div class="card">
-    <div class="sliders">
-
-      <div class="slider-group">
-        <label>
-          <span>Annual income</span>
-          <span class="slider-value" id="income-out">$100,000</span>
-        </label>
-        <input type="range" id="income" min="40000" max="2000000" step="10000" value="100000">
-      </div>
-
-      <div class="slider-group">
-        <label>
-          <span>Savings rate</span>
-          <span class="slider-value" id="rate-out">10%</span>
-        </label>
-        <input type="range" id="rate" min="5" max="50" step="1" value="10">
-      </div>
-
-      <div class="slider-group">
-        <label>
-          <span>Current assets</span>
-          <span class="slider-value" id="assets-out">$50,000</span>
-        </label>
-        <input type="range" id="assets" min="0" max="10000000" step="50000" value="50000">
-      </div>
-
+  <div class="mode-toggle-wrap">
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="install">Installing the system</button>
+      <button class="mode-btn" data-mode="run">Running the system</button>
     </div>
+  </div>
+
+  <div class="card">
+
+    <div class="mode-content active" id="mode-install">
+      <div class="sliders">
+
+        <div class="slider-group">
+          <label>
+            <span>Annual income</span>
+            <span class="slider-value" id="income-out">$100,000</span>
+          </label>
+          <input type="range" id="income" min="40000" max="2000000" step="10000" value="100000">
+        </div>
+
+        <div class="slider-group">
+          <label>
+            <span>Savings rate</span>
+            <span class="slider-value" id="rate-out">10%</span>
+          </label>
+          <input type="range" id="rate" min="5" max="50" step="1" value="10">
+        </div>
+
+        <div class="slider-group">
+          <label>
+            <span>Current assets</span>
+            <span class="slider-value" id="assets-out">$50,000</span>
+          </label>
+          <input type="range" id="assets" min="0" max="10000000" step="50000" value="50000">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mode-content" id="mode-run">
+      <div class="sliders">
+
+        <div class="slider-group">
+          <label>
+            <span>Starting assets</span>
+            <span class="slider-value" id="run-assets-out">$1,000,000</span>
+          </label>
+          <input type="range" id="run-assets" min="100000" max="10000000" step="50000" value="1000000">
+        </div>
+
+        <div class="slider-group">
+          <label>
+            <span>Annual return</span>
+            <span class="slider-value" id="run-return-out">10%</span>
+          </label>
+          <input type="range" id="run-return" min="4" max="15" step="1" value="10">
+        </div>
+
+        <div class="slider-group">
+          <label>
+            <span>Annual withdrawal</span>
+            <span class="slider-value" id="run-withdraw-out">$80,000</span>
+          </label>
+          <input type="range" id="run-withdraw" min="0" max="500000" step="5000" value="80000">
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <div class="paths">
@@ -366,7 +454,7 @@
       </div>
       <div class="path-label">In 10 years</div>
       <div class="path-amount" id="worker-total">$0</div>
-      <div class="path-desc">Savings in a bank account at 4%, eroded by 3% inflation.</div>
+      <div class="path-desc" id="worker-desc">Savings in a bank account at 4%, eroded by 3% inflation.</div>
     </div>
 
     <div class="path-card treasurer">
@@ -376,7 +464,7 @@
       </div>
       <div class="path-label">In 10 years</div>
       <div class="path-amount" id="treasurer-total">$0</div>
-      <div class="path-desc">Same money, deployed into appreciating assets at 12%.</div>
+      <div class="path-desc" id="treasurer-desc">Same money, deployed into appreciating assets at 12%.</div>
     </div>
 
   </div>
@@ -392,7 +480,7 @@
   </div>
 
   <div class="cta-row">
-    <p class="main-line">Same income. Same savings. Different game.</p>
+    <p class="main-line">Same starting point. Different game.</p>
     <p class="small">Share your result. Tag someone who needs to see it.</p>
   </div>
 
@@ -407,77 +495,162 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 (function() {
-  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const fmt = n => (n < 0 ? '-$' : '$') + Math.round(Math.abs(n)).toLocaleString();
   const fmtShort = n => {
-    if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return '$' + Math.round(n / 1000) + 'k';
-    return '$' + Math.round(n);
+    const abs = Math.abs(n);
+    const sign = n < 0 ? '-' : '';
+    if (abs >= 1000000) return sign + '$' + (abs / 1000000).toFixed(1) + 'M';
+    if (abs >= 1000) return sign + '$' + Math.round(abs / 1000) + 'k';
+    return sign + '$' + Math.round(abs);
   };
 
+  // Mode toggle
+  const modeButtons = document.querySelectorAll('.mode-btn');
+  const modeContents = document.querySelectorAll('.mode-content');
+  let currentMode = 'install';
+
+  modeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentMode = btn.dataset.mode;
+      modeButtons.forEach(b => b.classList.toggle('active', b.dataset.mode === currentMode));
+      modeContents.forEach(c => c.classList.toggle('active', c.id === 'mode-' + currentMode));
+      calc();
+    });
+  });
+
+  // Install mode sliders
   const incomeEl = document.getElementById('income');
   const rateEl = document.getElementById('rate');
   const assetsEl = document.getElementById('assets');
-
   const incomeOut = document.getElementById('income-out');
   const rateOut = document.getElementById('rate-out');
   const assetsOut = document.getElementById('assets-out');
 
+  // Run mode sliders
+  const runAssetsEl = document.getElementById('run-assets');
+  const runReturnEl = document.getElementById('run-return');
+  const runWithdrawEl = document.getElementById('run-withdraw');
+  const runAssetsOut = document.getElementById('run-assets-out');
+  const runReturnOut = document.getElementById('run-return-out');
+  const runWithdrawOut = document.getElementById('run-withdraw-out');
+
   const workerOut = document.getElementById('worker-total');
   const treasurerOut = document.getElementById('treasurer-total');
+  const workerDesc = document.getElementById('worker-desc');
+  const treasurerDesc = document.getElementById('treasurer-desc');
   const gapOut = document.getElementById('gap-amount');
   const narrativeOut = document.getElementById('gap-narrative');
 
-  const WORKER_RETURN = 0.04;
-  const WORKER_INFLATION = 0.03;
-  const TREASURER_RETURN = 0.12;
   const YEARS = 10;
+  const INSTALL_WORKER_REAL = 0.01; // 4% return - 3% inflation
+  const INSTALL_TREASURER_RETURN = 0.12;
+  const RUN_WORKER_REAL = 0.01;
 
   let chart = null;
 
   function calc() {
-    const income = parseInt(incomeEl.value);
-    const rate = parseInt(rateEl.value) / 100;
-    const assets = parseInt(assetsEl.value);
-    const annualContribution = income * rate;
+    let workerPoints, treasurerPoints, workerFinal, treasurerFinal, workerRanDryAt;
 
-    incomeOut.textContent = fmt(income);
-    rateOut.textContent = rate * 100 + '%';
-    assetsOut.textContent = fmt(assets);
+    if (currentMode === 'install') {
+      const income = parseInt(incomeEl.value);
+      const rate = parseInt(rateEl.value) / 100;
+      const assets = parseInt(assetsEl.value);
+      const annualContribution = income * rate;
 
-    const workerReal = WORKER_RETURN - WORKER_INFLATION;
-    const workerPoints = [];
-    const treasurerPoints = [];
+      incomeOut.textContent = fmt(income);
+      rateOut.textContent = rate * 100 + '%';
+      assetsOut.textContent = fmt(assets);
 
-    let workerBalance = assets;
-    let treasurerBalance = assets;
+      workerPoints = [assets];
+      treasurerPoints = [assets];
+      let workerBalance = assets;
+      let treasurerBalance = assets;
 
-    workerPoints.push(workerBalance);
-    treasurerPoints.push(treasurerBalance);
+      for (let y = 1; y <= YEARS; y++) {
+        workerBalance = workerBalance * (1 + INSTALL_WORKER_REAL) + annualContribution;
+        treasurerBalance = treasurerBalance * (1 + INSTALL_TREASURER_RETURN) + annualContribution;
+        workerPoints.push(workerBalance);
+        treasurerPoints.push(treasurerBalance);
+      }
 
-    for (let y = 1; y <= YEARS; y++) {
-      workerBalance = workerBalance * (1 + workerReal) + annualContribution;
-      treasurerBalance = treasurerBalance * (1 + TREASURER_RETURN) + annualContribution;
-      workerPoints.push(workerBalance);
-      treasurerPoints.push(treasurerBalance);
-    }
+      workerFinal = workerPoints[YEARS];
+      treasurerFinal = treasurerPoints[YEARS];
 
-    const workerFinal = workerPoints[YEARS];
-    const treasurerFinal = treasurerPoints[YEARS];
-    const gap = treasurerFinal - workerFinal;
-    const multiplier = treasurerFinal / Math.max(workerFinal, 1);
+      workerDesc.textContent = 'Savings in a bank account at 4%, eroded by 3% inflation.';
+      treasurerDesc.textContent = 'Same money, deployed into appreciating assets at 12%.';
 
-    workerOut.textContent = fmt(workerFinal);
-    treasurerOut.textContent = fmt(treasurerFinal);
-    gapOut.textContent = fmt(gap);
+      const gap = treasurerFinal - workerFinal;
+      const multiplier = treasurerFinal / Math.max(workerFinal, 1);
 
-    if (multiplier >= 2) {
-      narrativeOut.textContent = 'The treasurer path ends with ' + multiplier.toFixed(1) + 'x more wealth than the worker path. Same income. Same savings. Different game.';
-    } else if (multiplier >= 1.5) {
-      narrativeOut.textContent = 'The treasurer path ends with ' + Math.round((multiplier - 1) * 100) + '% more wealth. Compounding rewards the strategy, not the effort.';
+      workerOut.textContent = fmt(workerFinal);
+      workerOut.classList.remove('depleted');
+      treasurerOut.textContent = fmt(treasurerFinal);
+      gapOut.textContent = fmt(gap);
+
+      if (multiplier >= 2) {
+        narrativeOut.textContent = 'The treasurer path ends with ' + multiplier.toFixed(1) + 'x more wealth than the worker path. Same income. Same savings. Different game.';
+      } else if (multiplier >= 1.5) {
+        narrativeOut.textContent = 'The treasurer path ends with ' + Math.round((multiplier - 1) * 100) + '% more wealth. Compounding rewards the strategy, not the effort.';
+      } else {
+        narrativeOut.textContent = 'Even a modest shift in strategy widens the gap every year you keep going.';
+      }
+
     } else {
-      narrativeOut.textContent = 'Even a modest shift in strategy widens the gap every year you keep going.';
+      // Run mode
+      const startingAssets = parseInt(runAssetsEl.value);
+      const returnRate = parseInt(runReturnEl.value) / 100;
+      const withdrawal = parseInt(runWithdrawEl.value);
+
+      runAssetsOut.textContent = fmt(startingAssets);
+      runReturnOut.textContent = (returnRate * 100) + '%';
+      runWithdrawOut.textContent = fmt(withdrawal);
+
+      workerPoints = [startingAssets];
+      treasurerPoints = [startingAssets];
+      let workerBalance = startingAssets;
+      let treasurerBalance = startingAssets;
+      workerRanDryAt = null;
+
+      for (let y = 1; y <= YEARS; y++) {
+        workerBalance = workerBalance * (1 + RUN_WORKER_REAL) - withdrawal;
+        treasurerBalance = treasurerBalance * (1 + returnRate) - withdrawal;
+        if (workerBalance < 0) {
+          if (workerRanDryAt === null) workerRanDryAt = y;
+          workerBalance = 0;
+        }
+        if (treasurerBalance < 0) treasurerBalance = 0;
+        workerPoints.push(workerBalance);
+        treasurerPoints.push(treasurerBalance);
+      }
+
+      workerFinal = workerPoints[YEARS];
+      treasurerFinal = treasurerPoints[YEARS];
+
+      workerDesc.textContent = 'Assets sit in cash at 4%, drained by withdrawals and 3% inflation.';
+      treasurerDesc.textContent = 'Same assets, earning ' + (returnRate * 100) + '% while funding life.';
+
+      const gap = treasurerFinal - workerFinal;
+
+      workerOut.textContent = fmt(workerFinal);
+      workerOut.classList.toggle('depleted', workerFinal <= 0);
+      treasurerOut.textContent = fmt(treasurerFinal);
+      gapOut.textContent = fmt(gap);
+
+      const treasurerChange = treasurerFinal - startingAssets;
+      const treasurerGrew = treasurerChange > 0;
+
+      if (workerRanDryAt) {
+        narrativeOut.textContent = 'Worker path runs dry in year ' + workerRanDryAt + '. Treasurer path ' + (treasurerGrew ? 'grows by ' + fmt(treasurerChange) : 'preserves ' + fmt(treasurerFinal)) + ' over the same 10 years.';
+      } else if (treasurerGrew && workerFinal < startingAssets) {
+        narrativeOut.textContent = 'Worker pile shrinks while the treasurer pile grows by ' + fmt(treasurerChange) + '. The strategy funds the life and builds the wealth.';
+      } else if (treasurerGrew) {
+        narrativeOut.textContent = 'The treasurer pile grows by ' + fmt(treasurerChange) + ' over 10 years — while paying out every year.';
+      } else {
+        narrativeOut.textContent = 'Even a modest return shift extends the runway by years and preserves more wealth.';
+      }
     }
 
+    // Chart update
     const labels = [];
     for (let y = 0; y <= YEARS; y++) labels.push('Yr ' + y);
 
@@ -562,9 +735,11 @@
     }
   }
 
-  incomeEl.addEventListener('input', calc);
-  rateEl.addEventListener('input', calc);
-  assetsEl.addEventListener('input', calc);
+  // Wire up all sliders
+  [incomeEl, rateEl, assetsEl, runAssetsEl, runReturnEl, runWithdrawEl].forEach(el => {
+    el.addEventListener('input', calc);
+  });
+
   calc();
 })();
 </script>
